@@ -1,0 +1,57 @@
+name: Test Email Sending
+
+on:
+  workflow_dispatch:  # allows manual trigger from GitHub UI
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Send test email with CSV attachments
+        run: |
+          python -c "
+import smtplib
+import os
+from email.message import EmailMessage
+
+smtp_server = 'smtp.gmail.com'
+smtp_port = 587
+username = os.environ['SMTP_USERNAME']
+password = os.environ['SMTP_PASSWORD']
+to_emails = os.environ['EMAIL_TO'].split(',')
+from_email = os.environ['EMAIL_FROM']
+
+msg = EmailMessage()
+msg['Subject'] = 'Test Email from GitHub Actions'
+msg['From'] = from_email
+msg['To'] = ', '.join(to_emails)
+msg.set_content('This is a test email with CSV attachments from GitHub Actions.')
+
+for filename in ['simple_product_pricescrape.csv', 'child_product_pricescrape.csv']:
+    with open(filename, 'rb') as f:
+        file_data = f.read()
+    msg.add_attachment(file_data, maintype='text', subtype='csv', filename=filename)
+
+with smtplib.SMTP(smtp_server, smtp_port) as server:
+    server.starttls()
+    server.login(username, password)
+    server.send_message(msg)
+print('Email sent successfully.')
+          "
+        env:
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
