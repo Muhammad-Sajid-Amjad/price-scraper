@@ -21,7 +21,7 @@ jobs:
 
       - name: Send test email with CSV attachments
         run: |
-          python -c "
+          python - <<EOF
 import smtplib
 import os
 from email.message import EmailMessage
@@ -49,9 +49,10 @@ with smtplib.SMTP(smtp_server, smtp_port) as server:
     server.login(username, password)
     server.send_message(msg)
 print('Email sent successfully.')
-          "
+EOF
         env:
           SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+
