@@ -10,6 +10,7 @@ on:
 jobs:
   run-scraper:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -22,29 +23,43 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt || true  # optional
+          pip install -r requirements.txt
 
       - name: Run scraper
         run: python scraper.py
 
-      - name: Send CSV files by email
+      - name: Commit and push updated CSVs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add simple_product_pricescrape.csv child_product_pricescrape.csv
+          git commit -m "Update scraped prices - $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+          git push
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send Email with Updated Files
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 587
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
-          subject: 'Price Scraper CSV files - Updated'
-          to: ${{ secrets.EMAIL_TO }}
-          from: ${{ secrets.EMAIL_FROM }}
+          username: billyw.mbp@gmail.com
+          password: rooa dxwi kwtr biey
+          subject: Price Scraper Results 📊
+          to: |
+            sajid.mbp@gmail.com
+            sajid@marketingbyprof.com
+          from: Price Bot <billyw.mbp@gmail.com>
           body: |
             Hello,
 
-            Attached are the latest CSV files from the price scraper.
+            Here are the latest updated price files.
 
-            Regards,
-            Price Scraper Bot
+            ✅ simple_product_pricescrape.csv  
+            ✅ child_product_pricescrape.csv
+
+            Best,  
+            Your GitHub Scraper 🤖
           attachments: |
             simple_product_pricescrape.csv
             child_product_pricescrape.csv
-          secure: true
