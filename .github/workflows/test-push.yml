@@ -1,7 +1,7 @@
-name: Test Git Push
+name: Test Git Push with PAT
 
 on:
-  workflow_dispatch:  # allows you to manually run it from the Actions tab
+  workflow_dispatch:
 
 jobs:
   test-push:
@@ -10,18 +10,21 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
 
-      - name: Modify dummy file
+      - name: Set Git identity
         run: |
-          echo "Test run at $(date)" >> test_output.txt
+          git config user.name "laxest65"
+          git config user.email "laxest65@users.noreply.github.com"
 
-      - name: Commit and push test change
-        env:
-          GH_PAT: ${{ secrets.GH_PAT }}
+      - name: Make a test change
         run: |
-          git config --global user.name "laxest65"
-          git config --global user.email "laxest65_peeks@icloud.com"
-          git remote set-url origin https://x-access-token:${GH_PAT}@github.com/laxest65/price-scraper.git
+          echo "Test at $(date)" >> test_output.txt
           git add test_output.txt
-          git commit -m "Test push - $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+          git commit -m "Test push - $(date)"
+          
+      - name: Push to GitHub
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/laxest65/price-scraper.git
           git push origin main
