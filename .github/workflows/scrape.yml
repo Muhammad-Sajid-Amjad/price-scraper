@@ -13,7 +13,9 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -28,15 +30,14 @@ jobs:
       - name: Run scraper
         run: python scraper.py
 
-      - name: Commit and push updated CSVs
+      - name: Commit and Push Updated CSVs
         run: |
           git config user.name "laxest65"
-          git config user.email "laxest65_peeks@icloud.comm"
+          git config user.email "laxest65@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/laxest65/price-scraper.git
           git add simple_product_pricescrape.csv child_product_pricescrape.csv
           git commit -m "Update scraped prices - $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
-          git push
-
+          git push || echo "Nothing to push"
 
       - name: Send Email with Updated Files
         uses: dawidd6/action-send-mail@v3
@@ -44,7 +45,7 @@ jobs:
           server_address: smtp.gmail.com
           server_port: 587
           username: billyw.mbp@gmail.com
-          password: rooa dxwi kwtr biey
+          password: ${{ secrets.EMAIL_APP_PASSWORD }}
           subject: Price Scraper Results 📊
           to: |
             sajid.mbp@gmail.com
