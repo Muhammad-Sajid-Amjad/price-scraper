@@ -30,13 +30,13 @@ jobs:
 
       - name: Commit and push updated CSVs
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "laxest65"
+          git config user.email "laxest65_peeks@icloud.comm"
+          git remote set-url origin https://x-access-token:${{ secrets.GH_PAT }}@github.com/laxest65/price-scraper.git
           git add simple_product_pricescrape.csv child_product_pricescrape.csv
           git commit -m "Update scraped prices - $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
           git push
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
       - name: Send Email with Updated Files
         uses: dawidd6/action-send-mail@v3
