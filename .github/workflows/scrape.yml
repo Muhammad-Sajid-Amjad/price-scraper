@@ -27,3 +27,24 @@ jobs:
       - name: Run scraper
         run: python scraper.py
 
+      - name: Send CSV files by email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: 'Price Scraper CSV files - Updated'
+          to: ${{ secrets.EMAIL_TO }}
+          from: ${{ secrets.EMAIL_FROM }}
+          body: |
+            Hello,
+
+            Attached are the latest CSV files from the price scraper.
+
+            Regards,
+            Price Scraper Bot
+          attachments: |
+            simple_product_pricescrape.csv
+            child_product_pricescrape.csv
+          secure: true
