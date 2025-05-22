@@ -39,28 +39,10 @@ jobs:
           git commit -m "Update scraped prices - $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
           git push || echo "Nothing to push"
 
-      - name: Send Email with Updated Files
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: billyw.mbp@gmail.com
-          password: ${{ secrets.EMAIL_APP_PASSWORD }}
-          subject: Price Scraper Results 📊
-          to: |
-            sajid.mbp@gmail.com
-            sajid@marketingbyprof.com
-          from: Price Bot <billyw.mbp@gmail.com>
-          body: |
-            Hello,
-
-            Here are the latest updated price files.
-
-            ✅ simple_product_pricescrape.csv  
-            ✅ child_product_pricescrape.csv
-
-            Best,  
-            Your GitHub Scraper 🤖
-          attachments: |
-            simple_product_pricescrape.csv
-            child_product_pricescrape.csv
+      - name: Test send email with Python script
+        run: python send_test_email.py
+        env:
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
