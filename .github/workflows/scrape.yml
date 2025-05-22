@@ -1,0 +1,29 @@
+name: Run Price Scraper Twice Daily
+
+on:
+  schedule:
+    # 00:00 and 12:00 Netherlands time (Europe/Amsterdam is UTC+1 or +2 with DST)
+    - cron: '0 22 * * *'  # 00:00 NL time = 22:00 UTC
+    - cron: '0 10 * * *'  # 12:00 NL time = 10:00 UTC
+  workflow_dispatch:  # allows manual run from GitHub
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt || true  # optional
+
+      - name: Run scraper
+        run: python scraper.py
+
