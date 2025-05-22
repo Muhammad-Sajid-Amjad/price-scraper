@@ -1,0 +1,27 @@
+name: Test Git Push
+
+on:
+  workflow_dispatch:  # allows you to manually run it from the Actions tab
+
+jobs:
+  test-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Modify dummy file
+        run: |
+          echo "Test run at $(date)" >> test_output.txt
+
+      - name: Commit and push test change
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+        run: |
+          git config --global user.name "laxest65"
+          git config --global user.email "laxest65_peeks@icloud.com"
+          git remote set-url origin https://x-access-token:${GH_PAT}@github.com/laxest65/price-scraper.git
+          git add test_output.txt
+          git commit -m "Test push - $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
+          git push origin main
