@@ -39,10 +39,10 @@ jobs:
           git commit -m "Update scraped prices - $(date -u +'%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
           git push || echo "Nothing to push"
 
-      - name: Test send email with Python script
-        run: python send_test_email.py
-        env:
-          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
-          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
-          EMAIL_TO: ${{ secrets.EMAIL_TO }}
-          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+      # - name: Test send email with Python script
+      #   run: python send_test_email.py
+      #   env:
+      #     SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+      #     SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      #     EMAIL_TO: ${{ secrets.EMAIL_TO }}
+      #     EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
